@@ -1,6 +1,6 @@
 ---
 name: looki-personal-context
-description: Use personal context saved by Looki to recall experiences, find captured context, and prepare evidence-based recaps from moments and journals. Use when a request depends on personal context stored in Looki; access it through the Looki CLI when available.
+description: Use personal context saved by Looki to recall experiences, find captured context, and prepare evidence-based recaps from moments and journals.
 ---
 
 # Looki Personal Context
@@ -40,9 +40,21 @@ Choose records according to the question:
   comic, retrospective, meeting notes, or health report. Use moments when
   chronology, individual activities, or captured evidence matters.
 
-The Looki CLI is one way to access this context. When using, installing, or
-authenticating the CLI, read [references/cli.md](references/cli.md). Use the
-installed CLI help as the authority for the available commands and options.
+## Choose an Access Method
+
+Prefer an available, authorized Looki MCP connection. Discover its current tools
+and schemas through the MCP client rather than guessing tool names or arguments.
+Use only capabilities the connected server actually exposes.
+
+If Looki MCP is unavailable or does not support the requested operation, use an
+installed and authenticated Looki CLI when available. Follow the
+[`looki-cli`](../looki-cli/SKILL.md) skill for CLI discovery, authentication,
+commands, and result handling.
+
+Do not switch methods to bypass a permission denial or account mismatch. If
+neither method is ready, explain which setup is required and let the user choose.
+Connecting MCP, installing the CLI, and authenticating either method require
+separate user approval.
 
 ## Answer From Evidence
 
