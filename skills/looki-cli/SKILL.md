@@ -1,4 +1,9 @@
-# Looki CLI Reference
+---
+name: looki-cli
+description: Install, authenticate, configure, or use the Looki CLI to query personal context such as moments and journals. Use for Looki terminal commands and structured CLI output; do not use when an authorized Looki MCP connection already satisfies a personal-context request.
+---
+
+# Looki CLI
 
 Use the public `@looki-ai/cli` package to access Looki personal context from a
 terminal. Local desktop builds may expose additional commands; do not assume
@@ -92,6 +97,6 @@ When paginating, keep the original date filters, sort order, query, and limits
 unchanged. Stop if a cursor is missing or repeats while `has_more` is true, and
 report that coverage is incomplete instead of looping.
 
-If installed help or returned data differs from this reference, follow the
-installed CLI's help and actual response. Do not guess renamed commands, flags,
-or response fields.
+If installed help or returned data differs from this skill, follow the installed
+CLI's help and actual response. Do not guess renamed commands, flags, or response
+fields.
