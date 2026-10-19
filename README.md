@@ -1,6 +1,6 @@
 # Looki Skills
 
-Agent instructions for working with personal context stored in Looki.
+Agent instructions for working with personal memory stored in Looki.
 
 ## Install
 
