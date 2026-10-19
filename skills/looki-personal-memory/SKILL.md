@@ -1,27 +1,29 @@
 ---
-name: looki-personal-context
-description: Use personal context saved by Looki through an available MCP connection or the Looki CLI to recall experiences, find captured context, and prepare evidence-based recaps from moments and journals.
+name: looki-personal-memory
+description: Retrieve user's personal memory saved by Looki, including moments of daily activities, daily/weekly life summaries and chat summaries, health report, and AI generated journals such as illustrated diaries, comics, and vlogs, through MCP (if available) or the Looki CLI.
 ---
 
-# Looki Personal Context
+# Looki Personal Memory
 
 Looki is an agent that saves personal context. It organizes captured activity
-into two related record types:
+into four related record types:
 
-- A **moment** represents a bounded experience or activity. It has a date and
-  time range, a title and description, and may include search context or linked
-  media. Use moments to find what happened, when it happened, and the supporting
-  captured context.
-- A **journal** is a generated personal artifact built from saved context. Its
-  type determines its purpose and presentation: a journal may be a comic-style
-  account of everyday life, a review of the previous day, meeting notes, a
-  health report, or another structured interpretation of one or more
-  experiences. Use its type and content rather than assuming every journal is a
-  general summary.
-
-Moments and journals are complementary evidence, not interchangeable records.
-Do not count a journal and its underlying moments as separate occurrences of the
-same activity.
+1. **Moments** are time-bounded experiences or activities within a day, with
+   optional audio summaries. Use them to recall specific events by time or
+   keyword. Moment files, including raw media recordings, can also be
+   retrieved, primarily for local saving. Use with caution due to their large
+   file size.
+2. **Summaries** synthesize saved context for recall and review:
+   - A daily or weekly life summary covers timelines, places, key events, and
+     recurring patterns across the period.
+   - A chat summary captures key topics and exchanges from user-assistant
+     conversations so a previous discussion can be recalled or continued.
+3. **Health reports** contain health-related observations and estimates, such
+   as diet, steps, heart rate, and sleep. Use them to review daily patterns and
+   relationships among activity, diet, and rest.
+4. **Journals** are saved creative artifacts such as illustrated diaries, daily
+   comic storyboards, and vlogs. Use them for retrieval of those artifacts, not
+   as general-purpose summaries.
 
 ## Work With Personal Context
 
@@ -32,13 +34,17 @@ Choose records according to the question:
   and any known date bounds.
 - For a date range, retrieve enough pages to cover the requested period. A first
   page or a highlighted record is not an exhaustive history.
-- For an identified moment or journal, retrieve its detail directly rather than
-  searching again.
+- For an identified record, retrieve its detail directly rather than searching
+  again.
 - Retrieve moment files only when the request needs media or file-level context.
   A file URL or metadata does not establish the contents of the media.
-- Use journals when the request matches a generated artifact such as a daily
-  comic, retrospective, meeting notes, or health report. Use moments when
-  chronology, individual activities, or captured evidence matters.
+- Use moments when chronology, individual activities, or captured evidence
+  matters.
+- Use life summaries for day or week overviews, and chat summaries to recall or
+  continue previous conversations.
+- Use health reports for questions about health observations or patterns.
+- Use journals only when the user asks for a saved creative artifact such as an
+  illustrated diary, comic storyboard, or vlog.
 
 ## Choose an Access Method
 
