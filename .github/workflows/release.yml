@@ -18,7 +18,7 @@ jobs:
     with:
       ref: ${{ github.event.release.tag_name }}
       root: skills
-      owner: looki-ai
+      owner: looki
       changelog: "GitHub release ${{ github.event.release.tag_name }}"
       dry_run: false
     secrets:
