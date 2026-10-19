@@ -1,0 +1,31 @@
+name: Skills CI
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  sync-plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.LOOKI_CICD_GITHUB_APP_ID }}
+          private-key: ${{ secrets.LOOKI_CICD_GITHUB_APP_PRIVATE_KEY }}
+          owner: looki-ai
+          repositories: looki-plugin
+
+      - name: Trigger plugin skill sync
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh workflow run sync-skills.yml \
+            --repo looki-ai/looki-plugin \
+            --ref main \
+            --field source_ref=${{ github.sha }}
