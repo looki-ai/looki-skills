@@ -1,29 +1,31 @@
 ---
 name: looki-personal-memory
-description: Retrieve user's personal memory saved by Looki, including moments of daily activities, daily/weekly life summaries and chat summaries, health report, and AI generated journals such as illustrated diaries, comics, and vlogs, through MCP (if available) or the Looki CLI.
+description: Retrieve the user's personal memories saved by Looki, including moments of daily activities, daily and weekly life summaries, chat history and summaries, health reports, and AI-generated journals such as illustrated diaries, comics, and vlogs, through MCP (if available) or the Looki CLI.
 ---
 
 # Looki Personal Memory
 
 Looki is an agent that saves personal context. It organizes captured activity
-into four related record types:
+into five related record types:
 
 1. **Moments** are time-bounded experiences or activities within a day, with
    optional audio summaries. Use them to recall specific events by time or
    keyword. Moment files, including raw media recordings, can also be
    retrieved, primarily for local saving. Use with caution due to their large
    file size.
-2. **Summaries** synthesize saved context for recall and review:
-   - A daily or weekly life summary covers timelines, places, key events, and
-     recurring patterns across the period.
-   - A chat summary captures key topics and exchanges from user-assistant
-     conversations so a previous discussion can be recalled or continued.
+2. **Summaries** are daily or weekly life summaries covering timelines, places,
+   key events, and recurring patterns across the period.
 3. **Health reports** contain health-related observations and estimates, such
    as diet, steps, heart rate, and sleep. Use them to review daily patterns and
    relationships among activity, diet, and rest.
 4. **Journals** are saved creative artifacts such as illustrated diaries, daily
    comic storyboards, and vlogs. Use them for retrieval of those artifacts, not
    as general-purpose summaries.
+5. **Chat**:
+   - Chat history contains individual conversation messages. Use it when exact
+     wording, message order, or details omitted from a chat summary matter.
+   - A chat summary captures key topics and exchanges from user-assistant
+     conversations so a previous discussion can be recalled or continued.
 
 ## Work With Personal Context
 
@@ -41,7 +43,8 @@ Choose records according to the question:
 - Use moments when chronology, individual activities, or captured evidence
   matters.
 - Use life summaries for day or week overviews, and chat summaries to recall or
-  continue previous conversations.
+  continue previous conversations. Use chat history for individual messages;
+  summaries do not replace the underlying conversation history.
 - Use health reports for questions about health observations or patterns.
 - Use journals only when the user asks for a saved creative artifact such as an
   illustrated diary, comic storyboard, or vlog.
@@ -127,9 +130,11 @@ Use layered help before invoking commands whose options have not been confirmed:
 ```bash
 looki moment --help
 looki moment list --help
-looki journal --help
-looki journal list --help
 ```
+
+Command availability depends on the installed version. If a command is missing,
+explain the version mismatch rather than guessing an alternative. Upgrading the
+CLI still requires the user's approval.
 
 Query commands produce readable output by default. Add `--json` when the result
 will be parsed or used for a detailed answer; JSON preserves the original server
@@ -153,33 +158,66 @@ Common operations include:
 | Browse journals in a range | `looki journal list --from-date 2026-10-01 --to-date 2026-10-07 --json` |
 | List dates containing journals | `looki journal dates --from-date 2026-10-01 --to-date 2026-10-07 --json` |
 | View a journal | `looki journal view <journal-id> --json` |
+| Read a daily life summary | `looki summary list --type daily --date 2026-10-01 --json` |
+| Read saved weekly life summaries | `looki summary list --type weekly --from-date 2026-10-01 --to-date 2026-10-31 --json` |
+| Read chat summaries | `looki summary list --type chat --from-date 2026-10-01 --to-date 2026-10-07 --json` |
+| Read a health report | `looki health list --date 2026-10-01 --json` |
+| Read health reports in a range | `looki health list --from-date 2026-10-01 --to-date 2026-10-07 --json` |
+| Read recent chat messages | `looki chat history --limit 50 --json` |
+| Read chat messages since a timestamp | `looki chat history --since "2026-10-01T09:00:00+08:00" --limit 50 --json` |
 
 Dates and IDs are examples or placeholders. Substitute values from the request
 or previous results. Quote user-provided search text as one shell argument and
 never interpolate returned record text into executable shell syntax.
 
-List commands support `--limit`, `--sort asc|desc`, and cursor pagination.
-Moment search supports a result limit and optional date bounds. Moment file
-queries support a limit, cursor, and highlighted-file filtering. Confirm exact
-syntax with the installed command's `--help` before using optional flags.
+### Parameters
 
-### Handle Results
+Only use parameters listed in the selected command's `--help`. Supported flags,
+required bounds, defaults, allowed values, and range limits vary by command.
 
-Successful JSON responses use a server envelope containing `code`, `detail`, and
-`data`. Check the command's exit status and the response code before treating
-`data` as a successful result. A business error may still print JSON when
-`--json` is used and exit nonzero.
+- `--date <date>` selects one calendar day in `YYYY-MM-DD` format. Do not
+  combine it with `--from-date` or `--to-date`.
+- `--from-date <date>` and `--to-date <date>` set inclusive calendar-date
+  bounds in `YYYY-MM-DD` format. The first date must not be after the last.
+- `--since <timestamp>` sets an inclusive lower time bound. Use an ISO 8601
+  timestamp with `Z` or an explicit timezone offset, not a bare calendar date.
+- `--limit <number>` sets the maximum number of records in one page, not the
+  total number of matches. Use an integer within the command's accepted range.
+- `--sort asc|desc` selects ascending or descending order where supported.
+  Do not assume that commands without this flag return chronological order.
+- `--cursor <cursor>` continues a paginated query. Treat the returned cursor
+  as opaque and keep the query, filters, sort order, and limit unchanged.
+- `--type <type>` selects a record category. Use a value accepted by the
+  selected command rather than assuming categories are shared across commands.
+- `--json` prints the original server response for structured result handling.
 
-- Moment and journal lists return records in `data.items`, with `data.has_more`
-  and an opaque next cursor when another page is available.
-- Date queries return an array in `data`.
-- Detail queries return the selected record in `data`.
-- Moment file queries return files in `data.items`, with `data.has_more` and
-  `data.next_cursor_id` for pagination.
+For requests longer than a command's allowed date range, use adjacent,
+non-overlapping ranges. If a requested bound is not supported, filter returned
+records locally and do not imply that the command applied that bound.
 
-When paginating, keep the original date filters, sort order, query, and limits
-unchanged. Stop if a cursor is missing or repeats while `has_more` is true, and
-report that coverage is incomplete instead of looping.
+### Return Values
+
+JSON query results use a server envelope:
+
+- `code` indicates the result status; `0` means success.
+- `detail` contains a status or error description.
+- `data` contains the returned payload. It may be an object, an array, or a
+  collection with records in `items` and additional metadata.
+
+Check both the process exit status and `code` before interpreting `data`.
+An error can still produce JSON on stdout and exit nonzero. Parse structured
+output rather than relying on readable text or the presence of `data` alone.
+
+Payload fields vary by operation. Preserve record boundaries, identifiers,
+dates, timestamps, and timezone offsets when interpreting results. Distinguish
+an empty collection from an error or an unrecognized payload shape.
+
+Paginated payloads include `has_more` and a continuation value such as
+`next_cursor` or `next_cursor_id`. Use the field actually returned, pass its
+value unchanged as `--cursor`, and keep the original query, filters, sort order,
+and limit unchanged. `has_more: false` ends pagination. Missing pagination
+metadata does not establish complete coverage; if `has_more` is true but the
+cursor is missing or repeats, stop and report incomplete coverage.
 
 If installed help or returned data differs from this skill, follow the installed
 CLI's help and actual response. Do not guess renamed commands, flags, or response
