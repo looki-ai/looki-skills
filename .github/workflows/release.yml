@@ -1,0 +1,25 @@
+name: Publish Skills to ClawHub
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: clawhub-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    uses: openclaw/clawhub/.github/workflows/skill-publish.yml@main
+    with:
+      ref: ${{ github.event.release.tag_name }}
+      root: skills
+      owner: looki-ai
+      changelog: "GitHub release ${{ github.event.release.tag_name }}"
+      dry_run: false
+    secrets:
+      clawhub_token: ${{ secrets.CLAWHUB_TOKEN }}
